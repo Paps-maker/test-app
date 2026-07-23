@@ -16,7 +16,9 @@ import ProductsPage from './components/pages/ProductsPage';
 
 import './App.css';
 
-const API_URL = 'http://localhost:8081/api/products';
+// Vite projects use import.meta.env, Create-React-App uses process.env
+const BASE_DOMAIN = import.meta.env.VITE_API_URL || 'http://localhost:8081';
+const API_URL = `${BASE_DOMAIN}/api/products`;
 
 // Auth Switch View (Login / Register Toggle)
 function AuthView() {

@@ -3,7 +3,9 @@ import { createContext, useState, useContext } from 'react';
 const AuthContext = createContext(null);
 
 // Spring Boot Backend Base Auth URL
-const API_BASE_URL = 'http://localhost:8081/api/auth';
+// Vite projects use import.meta.env, Create-React-App uses process.env
+const BASE_DOMAIN = import.meta.env.VITE_API_URL || 'http://localhost:8081';
+const API_BASE_URL = `${BASE_DOMAIN}/api/auth`;
 
 export function AuthProvider({ children }) {
     // Pure in-memory React state (No localStorage fallback)

@@ -13,7 +13,7 @@ export default function SignUpForm({ onSwitchToLogin }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e) => {
-        if (error) setError(''); // Clear error message when user starts re-typing
+        if (error) setError(''); // Clear error message when user starts typing again
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
@@ -32,7 +32,7 @@ export default function SignUpForm({ onSwitchToLogin }) {
         setIsSubmitting(true);
 
         try {
-            // Calls register() in AuthContext to store credentials in localStorage
+            // Calls register() in AuthContext (Spring Boot endpoint)
             await register(formData.username, formData.email, formData.password);
         } catch (err) {
             setError(err.message || 'Registration failed. Please try again.');
@@ -44,6 +44,7 @@ export default function SignUpForm({ onSwitchToLogin }) {
     return (
         <div className="auth-card">
             <h2>Create Account</h2>
+
             {error && <div className="auth-error">{error}</div>}
 
             <form onSubmit={handleSubmit}>
@@ -99,7 +100,12 @@ export default function SignUpForm({ onSwitchToLogin }) {
                     />
                 </div>
 
-                <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="btn btn-primary"
+                    style={{ width: '100%', marginTop: '1rem' }}
+                >
                     {isSubmitting ? 'Creating Account...' : 'Sign Up'}
                 </button>
             </form>
@@ -107,7 +113,19 @@ export default function SignUpForm({ onSwitchToLogin }) {
             {onSwitchToLogin && (
                 <p className="auth-switch">
                     Already have an account?{' '}
-                    <button type="button" className="btn-link" onClick={onSwitchToLogin}>
+                    <button
+                        type="button"
+                        onClick={onSwitchToLogin}
+                        className="btn-link"
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--primary)',
+                            cursor: 'pointer',
+                            fontWeight: 600,
+                            padding: 0,
+                        }}
+                    >
                         Sign In
                     </button>
                 </p>

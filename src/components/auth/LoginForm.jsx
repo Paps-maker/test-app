@@ -20,7 +20,9 @@ export default function LoginForm({ onSwitchToRegister }) {
         try {
             await login(formData.username, formData.password);
         } catch (err) {
-            setError(err.message || 'Invalid username or password. Please try again or sign up.');
+            setError(
+                err.message || 'Invalid username or password. Please try again or sign up.'
+            );
         } finally {
             setIsSubmitting(false);
         }
@@ -29,6 +31,7 @@ export default function LoginForm({ onSwitchToRegister }) {
     return (
         <div className="auth-card">
             <h2>Sign In</h2>
+
             {error && <div className="auth-error">{error}</div>}
 
             <form onSubmit={handleSubmit}>
@@ -58,7 +61,12 @@ export default function LoginForm({ onSwitchToRegister }) {
                     />
                 </div>
 
-                <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="btn btn-primary"
+                    style={{ width: '100%', marginTop: '1rem' }}
+                >
                     {isSubmitting ? 'Authenticating...' : 'Login'}
                 </button>
             </form>
@@ -66,7 +74,19 @@ export default function LoginForm({ onSwitchToRegister }) {
             {onSwitchToRegister && (
                 <p className="auth-switch">
                     Don't have an account?{' '}
-                    <button type="button" className="btn-link" onClick={onSwitchToRegister}>
+                    <button
+                        type="button"
+                        onClick={onSwitchToRegister}
+                        className="btn-link"
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--primary)',
+                            cursor: 'pointer',
+                            fontWeight: 600,
+                            padding: 0,
+                        }}
+                    >
                         Register here
                     </button>
                 </p>

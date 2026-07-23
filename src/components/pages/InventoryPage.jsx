@@ -1,6 +1,13 @@
 import { useState } from 'react';
 
-export default function InventoryPage({ products, setProducts, searchTerm, setSearchTerm }) {
+export default function InventoryPage({
+                                          products = [],
+                                          searchTerm,
+                                          setSearchTerm,
+                                          onAddProduct,
+                                          onUpdateProduct,
+                                          onDeleteProduct,
+                                      }) {
     const [showModal, setShowModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
 
@@ -29,9 +36,11 @@ export default function InventoryPage({ products, setProducts, searchTerm, setSe
     const openEdit = (product) => {
         setEditingProduct(product);
         setFormData({
-            ...product,
-            price: product.price ?? '',
-            quantity: product.quantity ?? '',
+            sku: product.sku || '',
+            name: product.name || '',
+            category: product.category || 'General',
+            price: product.unitPrice ?? product.price ?? '',
+            quantity: product.stockQty ?? product.quantity ?? '',
             reorderLevel: product.reorderLevel ?? 5,
         });
         setShowModal(true);
@@ -42,38 +51,46 @@ export default function InventoryPage({ products, setProducts, searchTerm, setSe
         setEditingProduct(null);
     };
 
-    const handleSaveProduct = (e) => {
+    const handleSaveProduct = async (e) => {
         e.preventDefault();
         if (!formData.name || formData.price === '') return;
 
-        const parsedProduct = {
-            ...formData,
+        const payload = {
+            sku: formData.sku,
+            name: formData.name,
+            category: formData.category,
             price: Number(formData.price) || 0,
+            unitPrice: Number(formData.price) || 0,
             quantity: Number(formData.quantity) || 0,
+            stockQty: Number(formData.quantity) || 0,
             reorderLevel: Number(formData.reorderLevel) || 0,
         };
 
         if (editingProduct) {
-            setProducts(
-                products.map((p) => (p.id === editingProduct.id ? { ...parsedProduct, id: p.id } : p))
-            );
+            await onUpdateProduct(editingProduct.id, payload);
         } else {
-            const newEntry = {
-                ...parsedProduct,
-                id: Date.now(),
-            };
-            setProducts([...products, newEntry]);
+            await onAddProduct(payload);
         }
         closeModal();
     };
 
-    const handleRestock = (id) => {
-        setProducts(products.map((p) => (p.id === id ? { ...p, quantity: (Number(p.quantity) || 0) + 5 } : p)));
+    const handleRestock = async (item) => {
+        const currentQty = Number(item.stockQty ?? item.quantity ?? 0);
+        const updatedQty = currentQty + 5;
+
+        const payload = {
+            ...item,
+            quantity: updatedQty,
+            stockQty: updatedQty,
+            unitPrice: item.unitPrice ?? item.price ?? 0,
+        };
+
+        await onUpdateProduct(item.id, payload);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this product?')) {
-            setProducts(products.filter((p) => p.id !== id));
+            await onDeleteProduct(id);
         }
     };
 
@@ -86,38 +103,22 @@ export default function InventoryPage({ products, setProducts, searchTerm, setSe
     });
 
     return (
-        <>
-            <div
-                className="inventory-toolbar"
-                style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    gap: '1rem',
-                    marginBottom: '1.5rem',
-                }}
-            >
+        <div className="inventory-container">
+            {/* Toolbar */}
+            <div className="inventory-toolbar">
                 <input
                     type="text"
                     className="search-input"
                     placeholder="Search by SKU, Name, or Category..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{
-                        flex: '1',
-                        maxWidth: '400px',
-                        padding: '0.6rem 1rem',
-                        borderRadius: '6px',
-                        border: '1px solid var(--border)',
-                        background: 'var(--card-bg)',
-                        color: 'inherit',
-                    }}
                 />
                 <button className="btn btn-primary" onClick={openAdd}>
                     + Add Product
                 </button>
             </div>
 
+            {/* Table Container */}
             <div className="table-responsive">
                 <table className="inventory-table">
                     <thead>
@@ -134,24 +135,34 @@ export default function InventoryPage({ products, setProducts, searchTerm, setSe
                     <tbody>
                     {filteredProducts.length > 0 ? (
                         filteredProducts.map((item) => {
-                            const isLowStock = item.quantity <= item.reorderLevel;
+                            const qty = item.stockQty ?? item.quantity ?? 0;
+                            const price = item.unitPrice ?? item.price ?? 0;
+                            const reorder = item.reorderLevel ?? 5;
+                            const isLowStock = qty <= reorder;
+
                             return (
                                 <tr key={item.id}>
                                     <td className="sku-cell">{item.sku}</td>
                                     <td className="name-cell">{item.name}</td>
                                     <td>
-                                        <span className="category-tag">{item.category || 'General'}</span>
-                                    </td>
-                                    <td>
-                                        KSh {Number(item.price || 0).toLocaleString('en-KE', { minimumFractionDigits: 2 })}
-                                    </td>
-                                    <td>
-                      <span className={`qty-badge ${isLowStock ? 'low-stock' : 'normal-stock'}`}>
-                        {item.quantity} {isLowStock && '(Low Stock)'}
+                      <span className="category-tag">
+                        {item.category || 'General'}
                       </span>
                                     </td>
-                                    <td>{item.reorderLevel}</td>
-                                    <td className="actions-cell" style={{ textAlign: 'right' }}>
+                                    <td className="name-cell">
+                                        KSh {Number(price).toFixed(2)}
+                                    </td>
+                                    <td>
+                      <span
+                          className={`qty-badge ${
+                              isLowStock ? 'low-stock' : 'normal-stock'
+                          }`}
+                      >
+                        {qty} {isLowStock && '(Low Stock)'}
+                      </span>
+                                    </td>
+                                    <td style={{ color: 'var(--text-muted)' }}>{reorder}</td>
+                                    <td className="actions-cell">
                                         <button
                                             className="btn-icon"
                                             title="Edit Item"
@@ -162,7 +173,7 @@ export default function InventoryPage({ products, setProducts, searchTerm, setSe
                                         <button
                                             className="btn-icon"
                                             title="Restock (+5)"
-                                            onClick={() => handleRestock(item.id)}
+                                            onClick={() => handleRestock(item)}
                                         >
                                             📦 Restock
                                         </button>
@@ -179,8 +190,8 @@ export default function InventoryPage({ products, setProducts, searchTerm, setSe
                         })
                     ) : (
                         <tr>
-                            <td colSpan="7" className="no-data" style={{ textAlign: 'center', padding: '2rem' }}>
-                                No products found.
+                            <td colSpan="7" className="no-data">
+                                No products found matching your search criteria.
                             </td>
                         </tr>
                     )}
@@ -188,6 +199,7 @@ export default function InventoryPage({ products, setProducts, searchTerm, setSe
                 </table>
             </div>
 
+            {/* Product Modal Overlay */}
             {showModal && (
                 <div className="modal-overlay">
                     <div className="modal-content">
@@ -199,7 +211,9 @@ export default function InventoryPage({ products, setProducts, searchTerm, setSe
                                     type="text"
                                     required
                                     value={formData.sku}
-                                    onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, sku: e.target.value })
+                                    }
                                 />
                             </div>
 
@@ -210,7 +224,9 @@ export default function InventoryPage({ products, setProducts, searchTerm, setSe
                                     required
                                     placeholder="e.g. DAP Fertilizer 50kg"
                                     value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, name: e.target.value })
+                                    }
                                 />
                             </div>
 
@@ -218,7 +234,9 @@ export default function InventoryPage({ products, setProducts, searchTerm, setSe
                                 <label>Category</label>
                                 <select
                                     value={formData.category}
-                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, category: e.target.value })
+                                    }
                                 >
                                     <option value="Fertilizers">Fertilizers</option>
                                     <option value="Seeds">Seeds</option>
@@ -239,7 +257,9 @@ export default function InventoryPage({ products, setProducts, searchTerm, setSe
                                         step="any"
                                         required
                                         value={formData.price}
-                                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, price: e.target.value })
+                                        }
                                     />
                                 </div>
 
@@ -251,7 +271,9 @@ export default function InventoryPage({ products, setProducts, searchTerm, setSe
                                         step="any"
                                         required
                                         value={formData.quantity}
-                                        onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, quantity: e.target.value })
+                                        }
                                     />
                                 </div>
 
@@ -263,7 +285,9 @@ export default function InventoryPage({ products, setProducts, searchTerm, setSe
                                         step="any"
                                         required
                                         value={formData.reorderLevel}
-                                        onChange={(e) => setFormData({ ...formData, reorderLevel: e.target.value })}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, reorderLevel: e.target.value })
+                                        }
                                     />
                                 </div>
                             </div>
@@ -284,6 +308,6 @@ export default function InventoryPage({ products, setProducts, searchTerm, setSe
                     </div>
                 </div>
             )}
-        </>
+        </div>
     );
 }

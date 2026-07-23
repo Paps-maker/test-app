@@ -55,6 +55,16 @@ body {
   font-size: 0.95rem;
 }
 
+.user-profile-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.username-highlight {
+  color: var(--primary);
+}
+
 /* Navigation Bar */
 .dashboard-nav {
   display: flex;
@@ -145,6 +155,97 @@ body {
   color: var(--text-main);
 }
 
+.text-success {
+  color: var(--success) !important;
+}
+
+.text-danger-light {
+  color: #fca5a5 !important;
+}
+
+.quick-action-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.quick-action-card h3 {
+  margin: 0 0 0.25rem 0;
+}
+
+.quick-action-card p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Products Catalog Layout */
+.products-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.category-filter-container {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.category-filter-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-right: 0.5rem;
+}
+
+.btn-icon.active {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.product-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.product-card-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: var(--text-main);
+}
+
+.product-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.price-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.price-value {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 1.1rem;
+}
+
 /* Table Layout Fixes */
 .table-responsive {
   background: var(--card-bg);
@@ -158,7 +259,7 @@ body {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  min-width: 720px; /* Ensures minimum width on mobile before horizontal scrolling */
+  min-width: 720px;
 }
 
 .inventory-table th,
@@ -221,7 +322,6 @@ body {
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-/* Prevent Action Buttons from squeezing */
 .actions-cell {
   display: flex;
   align-items: center;
@@ -293,7 +393,7 @@ body {
   padding: 3rem 1.5rem;
 }
 
-/* Modal Styling Un-squeezed */
+/* Modal Styling */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -353,7 +453,6 @@ body {
   border-color: transparent;
 }
 
-/* Clean 3-column Grid for Price, Qty, Reorder Level */
 .form-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -361,7 +460,7 @@ body {
 }
 
 .form-row .form-group {
-  min-width: 0; /* Prevents input overflow inside grid cells */
+  min-width: 0;
 }
 
 .modal-actions {

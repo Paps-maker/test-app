@@ -1,0 +1,38 @@
+export const initialProducts = [
+    {
+        id: 1,
+        sku: 'INV-1001',
+        name: 'CAN Fertilizer 50kg',
+        category: 'Supplies',
+        price: 3200,
+        quantity: 25,
+        reorderLevel: 5,
+    },
+    {
+        id: 2,
+        sku: 'INV-1002',
+        name: 'DAP Fertilizer 50kg',
+        category: 'Supplies',
+        price: 3800,
+        quantity: 4,
+        reorderLevel: 10,
+    },
+    {
+        id: 3,
+        sku: 'INV-1003',
+        name: 'Knapsack Sprayer 16L',
+        category: 'Hardware',
+        price: 4500,
+        quantity: 12,
+        reorderLevel: 3,
+    },
+    {
+        id: 4,
+        sku: 'INV-1004',
+        name: 'Milking Can 10L',
+        category: 'Hardware',
+        price: 6200,
+        quantity: 2,
+        reorderLevel: 3,
+    },
+];

@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --bg-color: #0f172a;
   --card-bg: #1e293b;
@@ -10,7 +14,6 @@
   --success: #10b981;
 }
 
-/* Global Reset for Box-Sizing to prevent layout overflow */
 *,
 *::before,
 *::after {
@@ -25,13 +28,13 @@ body {
   line-height: 1.5;
 }
 
+/* Custom Components & Layouts */
 .inventory-container {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
 }
 
-/* Header */
 .inventory-header {
   display: flex;
   justify-content: space-between;
@@ -65,7 +68,6 @@ body {
   color: var(--primary);
 }
 
-/* Navigation Bar */
 .dashboard-nav {
   display: flex;
   gap: 0.75rem;
@@ -99,7 +101,6 @@ body {
   box-shadow: inset 0 -2px 0 0 var(--primary);
 }
 
-/* Toolbar */
 .inventory-toolbar {
   display: flex;
   justify-content: space-between;
@@ -125,7 +126,6 @@ body {
   border-color: transparent;
 }
 
-/* Metrics / Summary Cards */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -181,7 +181,6 @@ body {
   font-size: 0.9rem;
 }
 
-/* Products Catalog Layout */
 .products-wrapper {
   display: flex;
   flex-direction: column;
@@ -246,7 +245,6 @@ body {
   font-size: 1.1rem;
 }
 
-/* Table Layout Fixes */
 .table-responsive {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -330,7 +328,6 @@ body {
   white-space: nowrap;
 }
 
-/* Buttons */
 .btn {
   padding: 0.65rem 1.25rem;
   border-radius: 6px;
@@ -393,7 +390,6 @@ body {
   padding: 3rem 1.5rem;
 }
 
-/* Modal Styling */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -470,7 +466,6 @@ body {
   margin-top: 2rem;
 }
 
-/* Auth Component Styles */
 .auth-card {
   max-width: 420px;
   margin: 5rem auto;
@@ -505,30 +500,24 @@ body {
   color: var(--text-muted);
 }
 
-/* Mobile Responsiveness */
 @media (max-width: 640px) {
   .inventory-container {
     padding: 1rem;
   }
-
   .inventory-header {
     flex-direction: column;
     align-items: flex-start;
   }
-
   .inventory-toolbar {
     flex-direction: column;
     align-items: stretch;
   }
-
   .search-input {
     max-width: 100%;
   }
-
   .form-row {
     grid-template-columns: 1fr;
   }
-
   .modal-content {
     padding: 1.5rem;
   }

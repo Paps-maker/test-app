@@ -1,4 +1,5 @@
 import { createContext, useState, useContext } from 'react';
+import { apiFetch } from '../../context/apiFetch';
 
 const AuthContext = createContext(null);
 
@@ -15,7 +16,7 @@ export function AuthProvider({ children }) {
     // Real Spring Boot API Login
     const login = async (username, password) => {
         try {
-            const response = await fetch(`${API_BASE_URL}/login`, {
+            const response = await apiFetch(`${API_BASE_URL}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -52,7 +53,7 @@ export function AuthProvider({ children }) {
     // Real Spring Boot API Registration
     const register = async (username, email, password) => {
         try {
-            const response = await fetch(`${API_BASE_URL}/register`, {
+            const response = await apiFetch(`${API_BASE_URL}/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -77,7 +78,7 @@ export function AuthProvider({ children }) {
     // Logout clears React memory and notifies Spring Boot
     const logout = async () => {
         try {
-            await fetch(`${API_BASE_URL}/logout`, {
+            await apiFetch(`${API_BASE_URL}/logout`, {
                 method: 'POST',
                 credentials: 'include',
             }).catch(() => null);

@@ -5,6 +5,13 @@ import LoginForm from './components/auth/LoginForm';
 import SignUpForm from './components/auth/SignUpForm';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
+// Import Reusable Spinner Component
+import { Spinner } from './components/Spinner';
+
+// Import Global API Loading Context & Utility
+import { ApiProvider } from './context/ApiContext';
+import { apiFetch } from './context/apiFetch';
+
 // Import Navigation Components
 import Header from './components/navigation/Header';
 import Navbar from './components/navigation/Navbar';
@@ -43,7 +50,7 @@ function MainDashboard() {
     const fetchProducts = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await fetch(API_URL);
+            const response = await apiFetch(API_URL);
             if (!response.ok) {
                 throw new Error('Failed to fetch products from backend server');
             }
@@ -68,7 +75,7 @@ function MainDashboard() {
     // 2. Add Product
     const handleAddProduct = async (newProduct) => {
         try {
-            const response = await fetch(API_URL, {
+            const response = await apiFetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newProduct),
@@ -84,7 +91,7 @@ function MainDashboard() {
     // 3. Update Product
     const handleUpdateProduct = async (id, updatedProduct) => {
         try {
-            const response = await fetch(`${API_URL}/${id}`, {
+            const response = await apiFetch(`${API_URL}/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedProduct),
@@ -100,7 +107,7 @@ function MainDashboard() {
     // 4. Delete Product
     const handleDeleteProduct = async (id) => {
         try {
-            const response = await fetch(`${API_URL}/${id}`, {
+            const response = await apiFetch(`${API_URL}/${id}`, {
                 method: 'DELETE',
             });
             if (response.ok) {
@@ -114,7 +121,7 @@ function MainDashboard() {
     if (loading) {
         return (
             <div className="inventory-container flex justify-center items-center min-h-[400px]">
-                <p className="text-slate-400 font-semibold text-lg">Connecting to Spring Boot Backend...</p>
+                <Spinner text="Connecting to Spring Boot Backend..." />
             </div>
         );
     }
@@ -181,10 +188,12 @@ function MainDashboard() {
 
 export default function App() {
     return (
-        <AuthProvider>
-            <ProtectedRoute fallback={<AuthView />}>
-                <MainDashboard />
-            </ProtectedRoute>
-        </AuthProvider>
+        <ApiProvider>
+            <AuthProvider>
+                <ProtectedRoute fallback={<AuthView />}>
+                    <MainDashboard />
+                </ProtectedRoute>
+            </AuthProvider>
+        </ApiProvider>
     );
 }

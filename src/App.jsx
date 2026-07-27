@@ -51,14 +51,15 @@ function MainDashboard() {
             setLoading(true);
             const response = await apiFetch(API_URL);
             if (!response.ok) {
-                throw new Error('Failed to fetch products from backend server');
+                setError('Failed to fetch products from backend server');
+                return;
             }
             const data = await response.json();
             setProducts(data);
             setError(null);
         } catch (err) {
             console.error('API Error:', err);
-            setError(err.message);
+            setError(err.message || 'An unexpected error occurred while fetching data');
         } finally {
             setLoading(false);
         }
@@ -134,7 +135,7 @@ function MainDashboard() {
                     <p className="text-slate-400 text-sm mb-6">{error}</p>
                     <button
                         onClick={fetchProducts}
-                        className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg shadow transition-colors duration-150"
+                        className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg shadow transition-colors duration-150 cursor-pointer"
                     >
                         Retry Connection
                     </button>

@@ -23,7 +23,6 @@ import ProductsPage from './components/pages/ProductsPage';
 
 import './App.css';
 
-// Vite projects use import.meta.env, Create-React-App uses process.env
 const BASE_DOMAIN = import.meta.env.VITE_API_URL || 'http://localhost:8081';
 const API_URL = `${BASE_DOMAIN}/api/products`;
 
@@ -81,7 +80,7 @@ function MainDashboard() {
                 body: JSON.stringify(newProduct),
             });
             if (response.ok) {
-                fetchProducts(); // Refresh list after creation
+                fetchProducts();
             }
         } catch (err) {
             console.error('Failed to add product:', err);
@@ -97,7 +96,7 @@ function MainDashboard() {
                 body: JSON.stringify(updatedProduct),
             });
             if (response.ok) {
-                fetchProducts(); // Refresh list after update
+                fetchProducts();
             }
         } catch (err) {
             console.error('Failed to update product:', err);
@@ -109,9 +108,10 @@ function MainDashboard() {
         try {
             const response = await apiFetch(`${API_URL}/${id}`, {
                 method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
             });
             if (response.ok) {
-                fetchProducts(); // Refresh list after deletion
+                fetchProducts();
             }
         } catch (err) {
             console.error('Failed to delete product:', err);
@@ -120,7 +120,7 @@ function MainDashboard() {
 
     if (loading) {
         return (
-            <div className="inventory-container flex justify-center items-center min-h-[400px]">
+            <div className="min-h-screen bg-slate-900 flex justify-center items-center p-6">
                 <Spinner text="Connecting to Spring Boot Backend..." />
             </div>
         );
@@ -128,60 +128,64 @@ function MainDashboard() {
 
     if (error) {
         return (
-            <div className="inventory-container text-center py-12">
-                <p className="text-red-400 font-bold text-xl mb-2">Backend Connection Error</p>
-                <p className="text-slate-400 text-sm mb-4">{error}</p>
-                <button
-                    onClick={fetchProducts}
-                    className="btn btn-primary"
-                >
-                    Retry Connection
-                </button>
+            <div className="min-h-screen bg-slate-900 flex flex-col justify-center items-center text-center p-6">
+                <div className="max-w-md w-full bg-slate-800 border border-slate-700 rounded-xl p-8 shadow-2xl">
+                    <p className="text-red-400 font-bold text-xl mb-2">Backend Connection Error</p>
+                    <p className="text-slate-400 text-sm mb-6">{error}</p>
+                    <button
+                        onClick={fetchProducts}
+                        className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg shadow transition-colors duration-150"
+                    >
+                        Retry Connection
+                    </button>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="inventory-container">
+        <div className="min-h-screen bg-slate-900 text-slate-100 font-sans antialiased">
             {/* Navigation Header & Bar */}
             <Header />
             <Navbar />
 
-            {/* Dynamic Route-Based Page Rendering */}
-            <Routes>
-                <Route
-                    path="/overview"
-                    element={
-                        <OverviewPage
-                            products={products}
-                            onNavigateToAdd={() => navigate('/inventory')}
-                        />
-                    }
-                />
+            {/* Main Content Area */}
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <Routes>
+                    <Route
+                        path="/overview"
+                        element={
+                            <OverviewPage
+                                products={products}
+                                onNavigateToAdd={() => navigate('/inventory')}
+                            />
+                        }
+                    />
 
-                <Route
-                    path="/inventory"
-                    element={
-                        <InventoryPage
-                            products={products}
-                            searchTerm={searchTerm}
-                            setSearchTerm={setSearchTerm}
-                            onAddProduct={handleAddProduct}
-                            onUpdateProduct={handleUpdateProduct}
-                            onDeleteProduct={handleDeleteProduct}
-                        />
-                    }
-                />
+                    <Route
+                        path="/inventory"
+                        element={
+                            <InventoryPage
+                                products={products}
+                                searchTerm={searchTerm}
+                                setSearchTerm={setSearchTerm}
+                                onAddProduct={handleAddProduct}
+                                onUpdateProduct={handleUpdateProduct}
+                                onDeleteProduct={handleDeleteProduct}
+                            />
+                        }
+                    />
 
-                <Route
-                    path="/products"
-                    element={<ProductsPage products={products} />}
-                />
+                    <Route
+                        path="/products"
+                        element={<ProductsPage products={products} />}
+                    />
 
-                {/* Redirect root URL "/" or unknown URLs to "/overview" */}
-                <Route path="/" element={<Navigate to="/overview" replace />} />
-                <Route path="*" element={<Navigate to="/overview" replace />} />
-            </Routes>
+                    {/* Fallback Redirects */}
+                    <Route path="/" element={<Navigate to="/overview" replace />} />
+                    <Route path="*" element={<Navigate to="/overview" replace />} />
+                </Routes>
+            </main>
         </div>
     );
 }

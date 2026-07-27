@@ -42,14 +42,20 @@ export default function SignUpForm({ onSwitchToLogin }) {
     };
 
     return (
-        <div className="auth-card">
-            <h2>Create Account</h2>
+        <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 sm:p-8 shadow-2xl max-w-md w-full mx-auto space-y-6">
+            <h2 className="text-2xl font-bold text-slate-100 text-center">Create Account</h2>
 
-            {error && <div className="auth-error">{error}</div>}
+            {error && (
+                <div className="p-3.5 rounded-lg bg-red-500/15 border border-red-500/30 text-red-300 text-xs sm:text-sm font-medium leading-relaxed text-center">
+                    {error}
+                </div>
+            )}
 
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="reg-username">Username</label>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="flex flex-col gap-1.5">
+                    <label htmlFor="reg-username" className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        Username
+                    </label>
                     <input
                         id="reg-username"
                         type="text"
@@ -58,11 +64,14 @@ export default function SignUpForm({ onSwitchToLogin }) {
                         onChange={handleChange}
                         required
                         autoComplete="username"
+                        className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder-slate-500"
                     />
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="reg-email">Email Address</label>
+                <div className="flex flex-col gap-1.5">
+                    <label htmlFor="reg-email" className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        Email Address
+                    </label>
                     <input
                         id="reg-email"
                         type="email"
@@ -71,11 +80,14 @@ export default function SignUpForm({ onSwitchToLogin }) {
                         onChange={handleChange}
                         required
                         autoComplete="email"
+                        className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder-slate-500"
                     />
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="reg-password">Password</label>
+                <div className="flex flex-col gap-1.5">
+                    <label htmlFor="reg-password" className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        Password
+                    </label>
                     <input
                         id="reg-password"
                         type="password"
@@ -84,11 +96,14 @@ export default function SignUpForm({ onSwitchToLogin }) {
                         onChange={handleChange}
                         required
                         autoComplete="new-password"
+                        className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder-slate-500"
                     />
                 </div>
 
-                <div className="form-group">
-                    <label htmlFor="reg-confirm">Confirm Password</label>
+                <div className="flex flex-col gap-1.5">
+                    <label htmlFor="reg-confirm" className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        Confirm Password
+                    </label>
                     <input
                         id="reg-confirm"
                         type="password"
@@ -97,34 +112,26 @@ export default function SignUpForm({ onSwitchToLogin }) {
                         onChange={handleChange}
                         required
                         autoComplete="new-password"
+                        className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder-slate-500"
                     />
                 </div>
 
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="btn btn-primary"
-                    style={{ width: '100%', marginTop: '1rem' }}
+                    className="w-full mt-4 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-lg shadow transition-colors cursor-pointer"
                 >
                     {isSubmitting ? 'Creating Account...' : 'Sign Up'}
                 </button>
             </form>
 
             {onSwitchToLogin && (
-                <p className="auth-switch">
+                <p className="text-xs sm:text-sm text-slate-400 text-center pt-2 border-t border-slate-700/60">
                     Already have an account?{' '}
                     <button
                         type="button"
                         onClick={onSwitchToLogin}
-                        className="btn-link"
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            color: 'var(--primary)',
-                            cursor: 'pointer',
-                            fontWeight: 600,
-                            padding: 0,
-                        }}
+                        className="text-indigo-400 hover:text-indigo-300 font-semibold cursor-pointer underline-offset-2 hover:underline focus:outline-none"
                     >
                         Sign In
                     </button>

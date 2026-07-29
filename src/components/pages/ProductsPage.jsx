@@ -1,8 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { apiFetch } from '../../context/apiFetch';
 
-export default function ProductsPage({ products = [] }) {
+const BASE_DOMAIN = import.meta.env.VITE_API_URL || 'http://localhost:8081';
+const API_URL = `${BASE_DOMAIN}/api/products`;
+
+export default function ProductsPage() {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
+
+    // Fetch products using your centralized apiFetch utility
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                setLoading(true);
+                const response = await apiFetch(API_URL);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch products from the server.');
+                }
+                const data = await response.json();
+                setProducts(data);
+                setError(null);
+            } catch (err) {
+                console.error('API Error:', err);
+                setError(err.message || 'An unexpected error occurred.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
 
     // Extract unique categories safely
     const categories = [
@@ -23,6 +53,22 @@ export default function ProductsPage({ products = [] }) {
 
         return matchesSearch && matchesCategory;
     });
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64 text-slate-400 text-sm">
+                Loading inventory...
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+                Error: {error}
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -75,24 +121,24 @@ export default function ProductsPage({ products = [] }) {
                                     <td className="px-5 py-4 text-sm font-mono font-semibold text-indigo-400">{p.sku}</td>
                                     <td className="px-5 py-4 text-sm font-semibold text-slate-100">{p.name}</td>
                                     <td className="px-5 py-4 text-sm">
-                                            <span className="inline-block px-2.5 py-1 text-xs text-slate-300 bg-slate-700/50 border border-slate-600/50 rounded">
-                                                {p.category || 'General'}
-                                            </span>
+                                        <span className="inline-block px-2.5 py-1 text-xs text-slate-300 bg-slate-700/50 border border-slate-600/50 rounded">
+                                            {p.category || 'General'}
+                                        </span>
                                     </td>
                                     <td className="px-5 py-4 text-sm font-semibold text-slate-100">
                                         KSh {Number(price).toFixed(2)}
                                     </td>
                                     <td className="px-5 py-4 text-sm font-semibold text-slate-100">{stock}</td>
                                     <td className="px-5 py-4 text-sm">
-                                            <span
-                                                className={`inline-block px-2.5 py-1 text-xs font-semibold rounded ${
-                                                    isLowStock
-                                                        ? 'text-red-300 bg-red-500/20 border border-red-500/30'
-                                                        : 'text-emerald-300 bg-emerald-500/20 border border-emerald-500/30'
-                                                }`}
-                                            >
-                                                {isLowStock ? 'Low Stock' : 'In Stock'}
-                                            </span>
+                                        <span
+                                            className={`inline-block px-2.5 py-1 text-xs font-semibold rounded ${
+                                                isLowStock
+                                                    ? 'text-red-300 bg-red-500/20 border border-red-500/30'
+                                                    : 'text-emerald-300 bg-emerald-500/20 border border-emerald-500/30'
+                                            }`}
+                                        >
+                                            {isLowStock ? 'Low Stock' : 'In Stock'}
+                                        </span>
                                     </td>
                                 </tr>
                             );
